@@ -2,9 +2,22 @@ import argparse
 import os
 import shutil
 
-
-files_extension = [".txt", ".doc", ".docx", ".pdf", ".xlsx", ".bmp", ".jpg", ".rtf", ".pptx"
-                   ".conf", ".cfg", ".net", ".deny", ".allow"]
+files_extension = [
+    ".txt",
+    ".doc",
+    ".docx",
+    ".pdf",
+    ".xlsx",
+    ".bmp",
+    ".jpg",
+    ".rtf",
+    ".pptx",
+    ".conf",
+    ".cfg",
+    ".net",
+    ".deny",
+    ".allow",
+]
 
 target_dir_name = "ALL"
 
@@ -35,15 +48,19 @@ def group_up_files(new_dir_name):
 
 
 parser = argparse.ArgumentParser(
-        prog='butler',
-        description='''The Butler helps keep the castle clean and tidy''',
-        epilog='''(c) CoolCoderCarl'''
-    )
+    prog="butler",
+    description="""The Butler helps keep the castle clean and tidy""",
+    epilog="""(c) CoolCoderCarl""",
+)
 
 
-parser.add_argument('--clean', help="Clean target directory. Example /tmp/, both slash required")
+parser.add_argument(
+    "--clean", help="Clean target directory. Example /tmp/, both slash required"
+)
 
-parser.add_argument('--dir', help="Dir to group up the files. Example /tmp/, both slash required")
+parser.add_argument(
+    "--dir", help="Dir to group up the files. Example /tmp/, both slash required"
+)
 args = parser.parse_args()
 
 
@@ -51,6 +68,3 @@ if args.clean:
     clean_the_dir(args.clean)
 elif args.dir:
     group_up_files(target_dir_name)
-
-
-
