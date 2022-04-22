@@ -1,5 +1,6 @@
 import argparse
-import os, shutil
+import os
+import shutil
 
 
 files_extension = [".txt", ".doc", ".docx", ".pdf", ".xlsx", ".bmp", ".jpg", ".rtf", ".pptx"
@@ -40,9 +41,9 @@ parser = argparse.ArgumentParser(
     )
 
 
-parser.add_argument('--clean', help="Clean target directory. Example /tmp/, both slash require")
+parser.add_argument('--clean', help="Clean target directory. Example /tmp/, both slash required")
 
-parser.add_argument('--dir', help="Dir to group up the files. Example /tmp/, both slash require")
+parser.add_argument('--dir', help="Dir to group up the files. Example /tmp/, both slash required")
 args = parser.parse_args()
 
 
