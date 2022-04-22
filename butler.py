@@ -2,7 +2,10 @@ import argparse
 import os, shutil
 
 
-files_extension = [".txt", ".doc", ".docx", ".pdf", ".xlsx", ".bmp", ".jpg"]
+files_extension = [".txt", ".doc", ".docx", ".pdf", ".xlsx", ".bmp", ".jpg", ".rtf", ".pptx"
+                   ".conf", ".cfg", ".net", ".deny", ".allow"]
+
+target_dir_name = "ALL"
 
 
 def clean_the_dir(directory_path):
@@ -13,7 +16,21 @@ def clean_the_dir(directory_path):
         except OSError:
             os.remove(path)
 
-# def is_dir_exist():
+
+def group_up_files(new_dir_name):
+    print(new_dir_name)
+    for file in os.listdir(args.dir):
+        for ext in files_extension:
+            if file.endswith(ext):
+                file_path = os.path.join(args.dir, file)
+                print(file_path)
+                new_dir_path = args.dir + new_dir_name + ext.upper()
+                print(new_dir_path)
+                try:
+                    os.mkdir(new_dir_path)
+                except OSError as os_error:
+                    print(os_error)
+                shutil.move(file_path, new_dir_path)
 
 
 parser = argparse.ArgumentParser(
@@ -23,24 +40,16 @@ parser = argparse.ArgumentParser(
     )
 
 
-parser.add_argument('--clean', help="Clean trash can")
+parser.add_argument('--clean', help="Clean target directory. Example /tmp/, both slash require")
 
-parser.add_argument('--dir', help="Dir to group up the files")
+parser.add_argument('--dir', help="Dir to group up the files. Example /tmp/, both slash require")
 args = parser.parse_args()
 
 
 if args.clean:
     clean_the_dir(args.clean)
 elif args.dir:
-    for file in os.listdir(args.dir):
-        for ext in files_extension:
-            if file.endswith(ext):
-                print(os.path.join(args.dir, file))
-                print("ALL_" + ext.upper())
-                try:
-                    os.mkdir(args.dir + "ALL_" + ext.upper())
-                except OSError as os_error:
-                    print(os_error)
-                shutil.move(os.path.join(args.dir, file), args.dir + "ALL_" + ext.upper())
+    group_up_files(target_dir_name)
+
 
 
