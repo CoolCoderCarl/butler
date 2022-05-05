@@ -37,5 +37,7 @@ jobs:
           format: html
           message: |
             <b>!!! FAILED !!!</b>
+
             <b>Failed job:</b> https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
             See changes: https://github.com/${{ github.repository }}/commit/${{ github.sha }}
