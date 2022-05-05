@@ -64,7 +64,8 @@ parser.add_argument(
 args = parser.parse_args()
 
 
-if args.clean:
-    clean_the_dir(args.clean)
-elif args.dir:
-    group_up_files(target_dir_name)
+if __name__ == '__main__':
+    if args.clean:
+        clean_the_dir(args.clean)
+    elif args.dir:
+        group_up_files(target_dir_name)

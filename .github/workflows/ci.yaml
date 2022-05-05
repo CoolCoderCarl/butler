@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+
+  workflow_dispatch:
+
+jobs:
+  code_quality:
+    runs-on: ubuntu-latest
+    name: Checks with black, isort
+    container: python:3.9
+    outputs:
+      get_current_tag: ${{ steps.set_github_repository_short.outputs.github_repository_short }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Run script
+        run: |
+          pip install -r requirements.txt
+          ls -la
+      - name: Black check
+        run:
+          black --check .
+
+      - name: Isort check
+        run:
+          isort --check .
+
+      - name: Step To run on failure
+        if: ${{ failure() }}
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          format: html
+          message: |
+            <b>!!! FAILED !!!</b>
+            <b>Failed job:</b> https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            See changes: https://github.com/${{ github.repository }}/commit/${{ github.sha }}
