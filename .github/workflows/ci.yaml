@@ -116,6 +116,7 @@ jobs:
         run: |
           pwd
           ls -alr
+          ls -alr ./dist
 
       - name: Upload Release Asset
         id: upload-release-asset
