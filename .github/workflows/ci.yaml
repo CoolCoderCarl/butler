@@ -83,12 +83,12 @@ jobs:
           - os: windows-latest
             TARGET: windows
             CMD_BUILD: python -m PyInstaller --workpath /tmp/build --specpath /tmp -F butler.py
-            OUT_FILE_NAME: utility.exe
+            OUT_FILE_NAME: butler.exe
             ASSET_MIME: application/vnd.microsoft.portable-executable
           - os: ubuntu-latest
             TARGET: ubuntu
             CMD_BUILD: python -m PyInstaller --workpath /tmp/build --specpath /tmp -F butler.py
-            OUT_FILE_NAME: utility
+            OUT_FILE_NAME: butler
             ASSET_MIME: application/x-binary
 
     steps:
@@ -110,13 +110,6 @@ jobs:
           name: ${{ matrix.OUT_FILE_NAME }}
           path: ./dist/${{ matrix.OUT_FILE_NAME }}
           retention-days: 1
-
-
-      - name: Search
-        run: |
-          pwd
-          ls -alr
-          ls -alr ./dist
 
       - name: Upload Release Asset
         id: upload-release-asset
