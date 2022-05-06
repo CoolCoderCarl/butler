@@ -111,6 +111,12 @@ jobs:
           path: ./dist/${{ matrix.OUT_FILE_NAME }}
           retention-days: 1
 
+
+      - name: Search
+        run: |
+          pwd
+          ls -alr
+
       - name: Upload Release Asset
         id: upload-release-asset
         uses: actions/upload-release-asset@v1
