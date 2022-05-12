@@ -76,7 +76,7 @@ jobs:
     needs: [ build ]
 
     steps:
-      - name: Notify telegram message after Released
+      - name: Notify telegram message after Packaging
         uses: appleboy/telegram-action@master
         with:
           to: ${{ secrets.TELEGRAM_CHAT }}
@@ -92,5 +92,7 @@ jobs:
             Repository: ${{ github.repository }}
 
             Branch: ${{ github.ref }}
+
+            <b>Artifacts:</b> https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
             See changes: https://github.com/${{ github.repository }}/commit/${{ github.sha }}
