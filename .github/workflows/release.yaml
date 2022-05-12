@@ -1,16 +1,59 @@
 name: CI
 
 on:
-  pull_request:
+  push:
     branches: [ main ]
 
 jobs:
 
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    outputs:
+      get_release_url: ${{ steps.set_release_url.outputs.release_url }}
+      get_current_tag: ${{ steps.set_current_tag_id.outputs.current_tag }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Bump version and push tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.0
+        with:
+          github_token: ${{ secrets.REPOS_TOKEN }}
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.REPOS_TOKEN }}
+        with:
+          tag_name: ${{ steps.tag_version.outputs.new_tag }}
+          release_name: Release ${{ steps.tag_version.outputs.new_tag }}
+
+      - name: Set Release URL
+        id: set_release_url
+        run: echo "::set-output name=release_url::${{ steps.create_release.outputs.upload_url }}"
+
+      - name: Set tag version to output
+        id: set_current_tag_id
+        run: echo "::set-output name=current_tag::${{ steps.tag_version.outputs.new_tag }}"
+
+      - name: Step To run on failure
+        if: ${{ failure() }}
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          format: html
+          message: |
+            <b>!!! FAILED !!!</b>
+            <b>Failed job:</b> https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            See changes: https://github.com/${{ github.repository }}/commit/${{ github.sha }}
+
+
   build:
     name: Build packages
+    needs: release
     runs-on: ${{ matrix.os }}
-    outputs:
-      get_current_tag: ${{ steps.set_current_tag_id.outputs.current_tag }}
     strategy:
       matrix:
         include:
@@ -27,12 +70,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Bump version and push tag
-        id: tag_version
-        uses: mathieudutour/github-tag-action@v6.0
-        with:
-          github_token: ${{ secrets.REPOS_TOKEN }}
-
       - name: Set up Python 3.9
         uses: actions/setup-python@v2
         with:
@@ -53,9 +90,16 @@ jobs:
           path: ./dist/${{ matrix.OUT_FILE_NAME }}
           retention-days: 1
 
-      - name: Set tag version to output
-        id: set_current_tag_id
-        run: echo "::set-output name=current_tag::${{ steps.tag_version.outputs.new_tag }}"
+      - name: Upload Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.release.outputs.get_release_url }}
+          asset_path: ./dist/${{ matrix.OUT_FILE_NAME }}
+          asset_name: ${{ matrix.OUT_FILE_NAME }}
+          asset_content_type: ${{ matrix.ASSET_MIME }}
 
       - name: Step To run on failure
         if: ${{ failure() }}
@@ -73,7 +117,7 @@ jobs:
   telegram:
     runs-on: ubuntu-latest
     name: Notification
-    needs: [ build ]
+    needs: [ release, build ]
 
     steps:
       - name: Notify telegram message after Released
@@ -87,10 +131,12 @@ jobs:
 
             <b>WorkFlows:</b> <a href="https://github.com/${{ github.repository }}/actions">ActionsList</a>
 
-            Commit with tag: ${{ needs.build.outputs.get_current_tag }}
+            Commit with tag: ${{ needs.release.outputs.get_current_tag }}
 
             Repository: ${{ github.repository }}
 
             Branch: ${{ github.ref }}
+
+            <b>Release URL:</b> https://github.com/${{ github.repository }}/releases/tag/${{ needs.release.outputs.get_current_tag }}
 
             See changes: https://github.com/${{ github.repository }}/commit/${{ github.sha }}
