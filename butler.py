@@ -25,10 +25,13 @@ target_dir_name = "ALL"
 def clean_the_dir(directory_path):
     for files in os.listdir(directory_path):
         path = os.path.join(directory_path, files)
-        try:
-            shutil.rmtree(path)
-        except OSError:
-            os.remove(path)
+        if files == os.path.basename(__file__):
+            pass
+        else:
+            try:
+                shutil.rmtree(path)
+            except OSError:
+                os.remove(path)
 
 
 def group_up_files(new_dir_name):
