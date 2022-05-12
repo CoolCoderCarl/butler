@@ -25,7 +25,8 @@ target_dir_name = "ALL"
 def clean_the_dir(directory_path):
     for files in os.listdir(directory_path):
         path = os.path.join(directory_path, files)
-        if os.path.basename(__file__) == (path.split("/")[-1]):
+        print(path.split("/")[-1])
+        if "butler" in (path.split("/")[-1]):
             print("Skipped " + path.split("/")[-1])
         else:
             try:
