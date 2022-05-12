@@ -8,6 +8,7 @@ files_extension = [
     ".docx",
     ".pdf",
     ".xlsx",
+    ".zip",
     ".bmp",
     ".jpg",
     ".rtf",
@@ -25,7 +26,6 @@ target_dir_name = "ALL"
 def clean_the_dir(directory_path):
     for files in os.listdir(directory_path):
         path = os.path.join(directory_path, files)
-        print(path.split("/")[-1])
         if "butler" in (path.split("/")[-1]):
             print("Skipped " + path.split("/")[-1])
         else:
@@ -56,7 +56,6 @@ parser = argparse.ArgumentParser(
     description="""The Butler helps keep the castle clean and tidy""",
     epilog="""(c) CoolCoderCarl""",
 )
-
 
 parser.add_argument(
     "--clean", help="Clean target directory. Example /tmp/, both slash required"
