@@ -40,8 +40,8 @@ def clean_the_dir(path_to_clean: str):
         print("It is totally not great idea to remove all things")
         exit(1)
     else:
-        for files in os.listdir(path_to_clean):
-            path = os.path.join(path_to_clean, files)
+        for filename in os.listdir(path_to_clean):
+            path = os.path.join(path_to_clean, filename)
             if "butler" in (path.split("/")[-1]):
                 print("Skipped " + path.split("/")[-1])
             else:
@@ -52,19 +52,22 @@ def clean_the_dir(path_to_clean: str):
 
 
 def group_up_files(new_dir_name: str):
-    for file in os.listdir(args.dir):
-        for ext in files_extension:
-            if file.endswith(ext):
-                file_path = os.path.join(args.dir, file)
-                if args.dir == ".":
-                    new_dir_path = new_dir_name + ext.upper()
-                else:
-                    new_dir_path = args.dir + new_dir_name + ext.upper()
-                try:
-                    os.mkdir(new_dir_path)
-                except OSError:
-                    pass
-                shutil.move(file_path, new_dir_path)
+    for filename in os.listdir(args.dir):
+        if "butler" in filename:
+            print("Skipped " + filename)
+        else:
+            for ext in files_extension:
+                if filename.endswith(ext):
+                    file_path = os.path.join(args.dir, filename)
+                    if args.dir == ".":
+                        new_dir_path = new_dir_name + ext.upper()
+                    else:
+                        new_dir_path = args.dir + new_dir_name + ext.upper()
+                    try:
+                        os.mkdir(new_dir_path)
+                    except OSError:
+                        pass
+                    shutil.move(file_path, new_dir_path)
 
 
 def create_archive(dir_to_archive: str):
@@ -73,12 +76,15 @@ def create_archive(dir_to_archive: str):
     with ZipFile(str(date_time) + ".zip", "w") as zip_obj:
         for folder_name, sub_folders, filenames in os.walk(dir_to_archive):
             for filename in filenames:
-                for a_ext in archives_extension:
-                    if filename.endswith(a_ext):
-                        pass
-                    else:
-                        zip_path = os.path.join(folder_name, filename)
-                        zip_obj.write(zip_path, basename(zip_path))
+                if "butler" in filename:
+                    print("Skipped " + filename)
+                else:
+                    for a_ext in archives_extension:
+                        if filename.endswith(a_ext):
+                            pass
+                        else:
+                            zip_path = os.path.join(folder_name, filename)
+                            zip_obj.write(zip_path, basename(zip_path))
 
 
 parser = argparse.ArgumentParser(
