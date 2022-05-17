@@ -7,13 +7,20 @@ from zipfile import ZipFile
 
 files_extension = [
     ".txt",
+    ".ini",
     ".doc",
     ".docx",
     ".pdf",
     ".xlsx",
+    ".xls",
     ".zip",
+    ".iso",
     ".bmp",
     ".jpg",
+    ".png",
+    ".exe",
+    ".msi",
+    ".msu",
     ".rtf",
     ".pptx",
     ".conf",
@@ -45,7 +52,10 @@ def group_up_files(new_dir_name: str):
             if file.endswith(ext):
                 file_path = os.path.join(args.dir, file)
                 print(file_path)
-                new_dir_path = args.dir + new_dir_name + ext.upper()
+                if args.dir == '.':
+                    new_dir_path = new_dir_name + ext.upper()
+                else:
+                    new_dir_path = args.dir + new_dir_name + ext.upper()
                 print(new_dir_path)
                 try:
                     os.mkdir(new_dir_path)
