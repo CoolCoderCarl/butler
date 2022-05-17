@@ -52,7 +52,7 @@ def group_up_files(new_dir_name: str):
             if file.endswith(ext):
                 file_path = os.path.join(args.dir, file)
                 print(file_path)
-                if args.dir == '.':
+                if args.dir == ".":
                     new_dir_path = new_dir_name + ext.upper()
                 else:
                     new_dir_path = args.dir + new_dir_name + ext.upper()
