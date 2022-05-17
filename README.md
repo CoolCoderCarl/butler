@@ -13,6 +13,7 @@ In fact, this program is a working prototype for a similar program in golang, bu
 
 You can download it and enjoy
 
+
 ## How to use
 The program provides three functions:  
 **Cleaning**  
@@ -21,7 +22,7 @@ The program provides three functions:
 
 In case the first and third functions are already familiar, grouping may seem like an interesting function.
 
-In order  
+### In order  
 **Cleaning**  
 `butler.exe --clean /path/to/dir/`  
 Clean target dir. It is important to close slash.
