@@ -10,19 +10,26 @@ files_extension = [
     ".ini",
     ".doc",
     ".docx",
+    ".rtf",
     ".pdf",
     ".xlsx",
     ".xls",
+    ".pptx",
     ".zip",
+    ".7z",
+    ".gz",
+    ".bz",
+    ".gzip",
+    ".bzip",
     ".iso",
+    ".mkv",
+    ".mov",
     ".bmp",
     ".jpg",
     ".png",
     ".exe",
     ".msi",
     ".msu",
-    ".rtf",
-    ".pptx",
     ".conf",
     ".cfg",
     ".net",
@@ -82,9 +89,8 @@ def create_archive(dir_to_archive: str):
                     for a_ext in archives_extension:
                         if filename.endswith(a_ext):
                             pass
-                        else:
-                            zip_path = os.path.join(folder_name, filename)
-                            zip_obj.write(zip_path, basename(zip_path))
+                    zip_path = os.path.join(folder_name, filename)
+                    zip_obj.write(zip_path, basename(zip_path))
 
 
 parser = argparse.ArgumentParser(
