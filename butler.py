@@ -37,7 +37,7 @@ files_extension = [
     ".allow",
 ]
 
-archives_extension = [".zip", ".7z", ".gz", ".bz", ".gzip", ".bzip"]
+archives_extension = [".zip", ".7z", ".gz", ".bz", ".gzip", ".bzip", ".iso"]
 
 target_dir_name = "ALL"
 
