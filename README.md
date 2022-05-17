@@ -33,6 +33,9 @@ Group up files by extensions to new directory named *ALL*.*EXT*.
 For example, you have a lot of *.exe* files, after this command you will have one directory called *ALL.EXE* with all your *.exe* files in it.
 It is important to close slash.
 
+## Golang version
+[butler_go](https://github.com/CoolCoderCarl/butler_go)
+
 **Archiving**  
 `butler.exe --archive /path/to/dir/`  
 Create zip archive in current directory for target directory. It is important to close slash.
