@@ -82,9 +82,8 @@ def create_archive(dir_to_archive: str):
                     for a_ext in archives_extension:
                         if filename.endswith(a_ext):
                             pass
-                        else:
-                            zip_path = os.path.join(folder_name, filename)
-                            zip_obj.write(zip_path, basename(zip_path))
+                    zip_path = os.path.join(folder_name, filename)
+                    zip_obj.write(zip_path, basename(zip_path))
 
 
 parser = argparse.ArgumentParser(
