@@ -27,6 +27,11 @@ jobs:
         run:
           isort --check .
 
+      - name: Add label
+        uses: actions-ecosystem/action-add-labels@v1
+        with:
+          labels: develop
+
       - name: Step To run on failure
         if: ${{ failure() }}
         uses: appleboy/telegram-action@master
