@@ -6,11 +6,43 @@ on:
 
 jobs:
 
+  prepare:
+    name: Prepare env & label
+    runs-on: ubuntu-latest
+    outputs:
+      get_current_tag: ${{ steps.set_current_tag_id.outputs.current_tag }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Bump version and push tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.0
+        with:
+          github_token: ${{ secrets.REPOS_TOKEN }}
+
+      - name: Add label
+        uses: actions-ecosystem/action-add-labels@v1
+        with:
+          labels: develop
+
+      - name: Set tag version to output
+        id: set_current_tag_id
+        run: echo "::set-output name=current_tag::${{ steps.tag_version.outputs.new_tag }}"
+
+      - name: Step To run on failure
+        if: ${{ failure() }}
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          format: html
+          message: |
+            <b>!!! FAILED !!!</b>
+            <b>Failed job:</b> https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            See changes: https://github.com/${{ github.repository }}/commit/${{ github.sha }}
+
   build:
     name: Build packages
     runs-on: ${{ matrix.os }}
-    outputs:
-      get_current_tag: ${{ steps.set_current_tag_id.outputs.current_tag }}
     strategy:
       matrix:
         include:
@@ -27,17 +59,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Bump version and push tag
-        id: tag_version
-        uses: mathieudutour/github-tag-action@v6.0
-        with:
-          github_token: ${{ secrets.REPOS_TOKEN }}
-
-      - name: Add label
-        uses: actions-ecosystem/action-add-labels@v1
-        with:
-          labels: develop
-
       - name: Set up Python 3.9
         uses: actions/setup-python@v2
         with:
@@ -58,10 +79,6 @@ jobs:
           path: ./dist/${{ matrix.OUT_FILE_NAME }}
           retention-days: 1
 
-      - name: Set tag version to output
-        id: set_current_tag_id
-        run: echo "::set-output name=current_tag::${{ steps.tag_version.outputs.new_tag }}"
-
       - name: Step To run on failure
         if: ${{ failure() }}
         uses: appleboy/telegram-action@master
@@ -78,7 +95,7 @@ jobs:
   telegram:
     runs-on: ubuntu-latest
     name: Notification
-    needs: [ build ]
+    needs: [ prepare, build ]
 
     steps:
       - name: Notify telegram message after Packaging
@@ -92,7 +109,7 @@ jobs:
 
             <b>WorkFlows:</b> <a href="https://github.com/${{ github.repository }}/actions">ActionsList</a>
 
-            Commit with tag: ${{ needs.build.outputs.get_current_tag }}
+            Commit with tag: ${{ needs.prepare.outputs.get_current_tag }}
 
             Repository: ${{ github.repository }}
 
