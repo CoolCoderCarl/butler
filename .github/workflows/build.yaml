@@ -33,6 +33,11 @@ jobs:
         with:
           github_token: ${{ secrets.REPOS_TOKEN }}
 
+      - name: Add label
+        uses: actions-ecosystem/action-add-labels@v1
+        with:
+          labels: develop
+
       - name: Set up Python 3.9
         uses: actions/setup-python@v2
         with:
