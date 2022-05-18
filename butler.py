@@ -42,6 +42,7 @@ archives_extension = [".zip", ".7z", ".gz", ".bz", ".gzip", ".bzip", ".iso"]
 target_dir_name = "ALL"
 
 
+# Delete files by mask or exclude deletion
 def clean_the_dir(path_to_clean: str):
     if args.clean == "/":
         print("It is totally not great idea to remove all things")
