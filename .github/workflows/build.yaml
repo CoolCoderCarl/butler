@@ -16,12 +16,12 @@ jobs:
         include:
           - os: windows-latest
             TARGET: windows
-            CMD_BUILD: python -m PyInstaller --workpath /tmp/build --specpath /tmp -F butler.py
+            CMD_BUILD: python -m PyInstaller --clean --workpath /tmp/build --specpath /tmp -F butler.py
             OUT_FILE_NAME: butler.exe
             ASSET_MIME: application/vnd.microsoft.portable-executable
           - os: ubuntu-latest
             TARGET: ubuntu
-            CMD_BUILD: python -m PyInstaller --workpath /tmp/build --specpath /tmp -F butler.py
+            CMD_BUILD: python -m PyInstaller --clean --workpath /tmp/build --specpath /tmp -F butler.py
             OUT_FILE_NAME: butler
             ASSET_MIME: application/x-binary
 
