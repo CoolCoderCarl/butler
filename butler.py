@@ -59,6 +59,9 @@ def clean_the_dir(path_to_clean: str):
 
 
 def group_up_files(new_dir_name: str):
+    if args.dir == "/":
+        print("It is totally not great idea to modify all things")
+        exit(1)
     for filename in os.listdir(args.dir):
         if "butler" in filename:
             print("Skipped " + filename)

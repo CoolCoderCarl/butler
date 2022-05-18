@@ -20,14 +20,21 @@ jobs:
         with:
           github_token: ${{ secrets.REPOS_TOKEN }}
 
+      - name: Build Changelog
+        id: github_release
+        uses: mikepenz/release-changelog-builder-action@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Create Release
         id: create_release
-        uses: actions/create-release@v1
+        uses: actions/create-release@v3
         env:
           GITHUB_TOKEN: ${{ secrets.REPOS_TOKEN }}
         with:
           tag_name: ${{ steps.tag_version.outputs.new_tag }}
           release_name: Release ${{ steps.tag_version.outputs.new_tag }}
+          body: ${{steps.github_release.outputs.changelog}}
 
       - name: Set Release URL
         id: set_release_url
@@ -59,12 +66,12 @@ jobs:
         include:
           - os: windows-latest
             TARGET: windows
-            CMD_BUILD: python -m PyInstaller --workpath /tmp/build --specpath /tmp -F butler.py
+            CMD_BUILD: python -m PyInstaller --clean --workpath /tmp/build --specpath /tmp -F butler.py
             OUT_FILE_NAME: butler.exe
             ASSET_MIME: application/vnd.microsoft.portable-executable
           - os: ubuntu-latest
             TARGET: ubuntu
-            CMD_BUILD: python -m PyInstaller --workpath /tmp/build --specpath /tmp -F butler.py
+            CMD_BUILD: python -m PyInstaller --clean --workpath /tmp/build --specpath /tmp -F butler.py
             OUT_FILE_NAME: butler
             ASSET_MIME: application/x-binary
 
