@@ -62,22 +62,23 @@ def group_up_files(new_dir_name: str):
     if args.dir == "/":
         print("It is totally not great idea to modify all things")
         exit(1)
-    for filename in os.listdir(args.dir):
-        if "butler" in filename:
-            print("Skipped " + filename)
-        else:
-            for ext in files_extension:
-                if filename.endswith(ext):
-                    file_path = os.path.join(args.dir, filename)
-                    if args.dir == ".":
-                        new_dir_path = new_dir_name + ext.upper()
-                    else:
-                        new_dir_path = args.dir + new_dir_name + ext.upper()
-                    try:
-                        os.mkdir(new_dir_path)
-                    except OSError:
-                        pass
-                    shutil.move(file_path, new_dir_path)
+    else:
+        for filename in os.listdir(args.dir):
+            if "butler" in filename:
+                print("Skipped " + filename)
+            else:
+                for ext in files_extension:
+                    if filename.endswith(ext):
+                        file_path = os.path.join(args.dir, filename)
+                        if args.dir == ".":
+                            new_dir_path = new_dir_name + ext.upper()
+                        else:
+                            new_dir_path = args.dir + new_dir_name + ext.upper()
+                        try:
+                            os.mkdir(new_dir_path)
+                        except OSError:
+                            pass
+                        shutil.move(file_path, new_dir_path)
 
 
 def create_archive(dir_to_archive: str):
