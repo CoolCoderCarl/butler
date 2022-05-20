@@ -143,7 +143,9 @@ group_up_parser = group_up_subparser.add_parser(
 group_up_parser.add_argument(
     "--source", help="Source dir name. Example /tmp/, both slash required", type=str
 )
-group_up_parser.add_argument("--target", help="Target dir name. Example ALL",default="ALL", type=str)
+group_up_parser.add_argument(
+    "--target", help="Target dir name. Example ALL", default="ALL", type=str
+)
 
 
 root_parser.add_argument(
