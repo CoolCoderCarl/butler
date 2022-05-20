@@ -1,8 +1,12 @@
 name: Release
 
 on:
-  push:
+  pull_request:
     branches: [ main ]
+    paths-ignore:
+      - 'README.md'
+      - '.gitignore'
+      - 'changelog.json'
 
 jobs:
 
@@ -13,7 +17,10 @@ jobs:
       get_release_url: ${{ steps.set_release_url.outputs.release_url }}
       get_current_tag: ${{ steps.set_current_tag_id.outputs.current_tag }}
     steps:
-      - uses: actions/checkout@v2
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
       - name: Bump version and push tag
         id: tag_version
         uses: mathieudutour/github-tag-action@v6.0
@@ -46,7 +53,7 @@ jobs:
         id: set_current_tag_id
         run: echo "::set-output name=current_tag::${{ steps.tag_version.outputs.new_tag }}"
 
-      - name: Step To run on failure
+      - name: Notify if failure
         if: ${{ failure() }}
         uses: appleboy/telegram-action@master
         with:
@@ -110,7 +117,7 @@ jobs:
           asset_name: ${{ matrix.OUT_FILE_NAME }}
           asset_content_type: ${{ matrix.ASSET_MIME }}
 
-      - name: Step To run on failure
+      - name: Notify if failure
         if: ${{ failure() }}
         uses: appleboy/telegram-action@master
         with:
