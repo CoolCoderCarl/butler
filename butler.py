@@ -8,6 +8,7 @@ from zipfile import ZipFile
 files_extension = [
     ".txt",
     ".ini",
+    ".md",
     ".doc",
     ".docx",
     ".rtf",
@@ -24,6 +25,7 @@ files_extension = [
     ".iso",
     ".mkv",
     ".mov",
+    ".mp4",
     ".bmp",
     ".jpg",
     ".png",
@@ -44,13 +46,18 @@ target_dir_name = "ALL"
 
 # Delete files by mask or exclude deletion
 def clean_the_dir(path_to_clean: str):
+    """
+    Clean the target directory, but not delete directory itself
+    :param path_to_clean:
+    :return:
+    """
     if args.clean == "/":
         print("It is totally not great idea to remove all things")
         exit(1)
     else:
         for filename in os.listdir(path_to_clean):
             path = os.path.join(path_to_clean, filename)
-            if "butler" in (path.split("/")[-1]):
+            if "butler" in (path.split("/")[-1]).lower():
                 print("Skipped " + path.split("/")[-1])
             else:
                 try:
@@ -60,12 +67,19 @@ def clean_the_dir(path_to_clean: str):
 
 
 def group_up_files(new_dir_name: str):
+    """
+    Group up files in target directory
+    Create directory for files in target directory with ALL.EXT template according the files extensions
+    Move all files to relevant directory
+    :param new_dir_name:
+    :return:
+    """
     if args.dir == "/":
         print("It is totally not great idea to modify all things")
         exit(1)
     else:
         for filename in os.listdir(args.dir):
-            if "butler" in filename:
+            if "butler" in filename.lower():
                 print("Skipped " + filename)
             else:
                 for ext in files_extension:
@@ -83,6 +97,12 @@ def group_up_files(new_dir_name: str):
 
 
 def create_archive(dir_to_archive: str):
+    """
+    Archive all files in target directory & add archive near the butler.exe
+    Ignore files with archive extensions
+    :param dir_to_archive:
+    :return:
+    """
     now = datetime.now()
     date_time = now.strftime("%m.%d.%Y_%H.%M.%S")
     with ZipFile(str(date_time) + ".zip", "w") as zip_obj:
