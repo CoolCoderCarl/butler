@@ -41,8 +41,6 @@ files_extension = [
 
 archives_extension = [".zip", ".7z", ".gz", ".bz", ".gzip", ".bzip", ".iso"]
 
-target_dir_name = "ALL"
-
 
 # Delete files by mask or exclude deletion
 def clean_the_dir(path_to_clean: str):
@@ -74,21 +72,23 @@ def group_up_files(new_dir_name: str):
     :param new_dir_name:
     :return:
     """
-    if args.dir == "/":
+    if args.source == "/":
         print("It is totally not great idea to modify all things")
         exit(1)
     else:
-        for filename in os.listdir(args.dir):
+        for filename in os.listdir(args.source):
             if "butler" in filename.lower():
                 print("Skipped " + filename)
             else:
                 for ext in files_extension:
                     if filename.endswith(ext):
-                        file_path = os.path.join(args.dir, filename)
-                        if args.dir == ".":
-                            new_dir_path = new_dir_name + ext.upper()
+                        file_path = os.path.join(args.source, filename)
+                        if args.source == ".":
+                            new_dir_path = new_dir_name.upper() + ext.upper()
                         else:
-                            new_dir_path = args.dir + new_dir_name + ext.upper()
+                            new_dir_path = (
+                                args.source + new_dir_name.upper() + ext.upper()
+                            )
                         try:
                             os.mkdir(new_dir_path)
                         except OSError:
@@ -108,7 +108,7 @@ def create_archive(dir_to_archive: str):
     with ZipFile(str(date_time) + ".zip", "w") as zip_obj:
         for folder_name, sub_folders, filenames in os.walk(dir_to_archive):
             for filename in filenames:
-                if "butler" in filename:
+                if "butler" in filename.lower():
                     print("Skipped " + filename)
                 else:
                     for a_ext in archives_extension:
@@ -118,32 +118,51 @@ def create_archive(dir_to_archive: str):
                     zip_obj.write(zip_path, basename(zip_path))
 
 
-parser = argparse.ArgumentParser(
+root_parser = argparse.ArgumentParser(
     prog="butler",
     description="""The Butler helps keep the castle clean and tidy""",
     epilog="""(c) CoolCoderCarl""",
 )
 
-parser.add_argument(
-    "--clean", help="Clean target directory. Example /tmp/, both slash required"
+root_parser.add_argument(
+    "-c",
+    "--clean",
+    help="Clean target directory. Example /tmp/, both slash required",
+    type=str,
 )
 
-parser.add_argument(
-    "--dir", help="Dir to group up the files. Example /tmp/, both slash required"
+group_up_subparser = root_parser.add_subparsers(
+    title="group_up_subparser",
+    dest="group",
+    help="Group up files in target dir with target dir name",
 )
 
-parser.add_argument(
+group_up_parser = group_up_subparser.add_parser(
+    "group", help="Dir to group up the files."
+)
+group_up_parser.add_argument(
+    "--source", help="Source dir name. Example /tmp/, both slash required", type=str
+)
+group_up_parser.add_argument("--target", help="Target dir name. Example ALL", type=str)
+
+
+root_parser.add_argument(
+    "-a",
     "--archive",
     help="Create archive from target directory. Example /tmp/, both slash required",
+    type=str,
 )
 
-args = parser.parse_args()
+args = root_parser.parse_args()
 
 
 if __name__ == "__main__":
     if args.clean:
         clean_the_dir(args.clean)
-    elif args.dir:
-        group_up_files(target_dir_name)
+    elif args.group:
+        group_up_files(args.target)
     elif args.archive:
         create_archive(args.archive)
+    # print(args.group)
+    # print(args.source)
+    # print(args.target)
