@@ -31,6 +31,11 @@ jobs:
         with:
           labels: develop
 
+      - uses: actions-ecosystem/action-add-assignees@v1
+        with:
+          assignees: ${{ github.actor }}
+          github_token: ${{ secrets.REPOS_TOKEN }}
+
       - name: Set tag version to output
         id: set_current_tag_id
         run: echo "::set-output name=current_tag::${{ steps.tag_version.outputs.new_tag }}"
