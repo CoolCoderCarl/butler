@@ -31,8 +31,10 @@ In case the first and third functions are already familiar, grouping may seem li
 Clean target dir but not delete it.
 
 **Grouping**  
-`butler.exe --dir /path/to/dir/`  
-Group up files by extensions to new directory named *ALL*.*EXT*.  
+`butler.exe group --source /path/to/dir/ --target DIRNAME`  
+Group up files by extensions to new directory named.  
+From `--source` get path to directory where the files will be group up.  
+From `--target` get new directory name where the files will be moved. Default *ALL*.  
 For example, you have a lot of *.exe* files, after this command you will have one directory called *ALL.EXE* with all your *.exe* files in it.
 
 **Archiving**  
