@@ -42,7 +42,6 @@ files_extension = [
 archives_extension = [".zip", ".7z", ".gz", ".bz", ".gzip", ".bzip", ".iso"]
 
 
-# Delete files by mask or exclude deletion
 def clean_the_dir(path_to_clean: str):
     """
     Clean the target directory, but not delete directory itself
