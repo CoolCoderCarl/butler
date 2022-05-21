@@ -11,6 +11,7 @@ jobs:
     container: python:3.9
 
     steps:
+
       - name: Checkout code
         uses: actions/checkout@v2
 
@@ -37,10 +38,12 @@ jobs:
 
   create_pull_request:
     runs-on: ubuntu-latest
-    needs: code_quality
     name: Create Pull Request to develop
 
     steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v2
 
       - name: Create PR to develop
         uses: repo-sync/pull-request@v2
