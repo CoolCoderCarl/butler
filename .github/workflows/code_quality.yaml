@@ -48,13 +48,13 @@ jobs:
       - name: Create PR to develop
         uses: repo-sync/pull-request@v2
         with:
-          github_token: ${{ secrets.REPOS_TOKEN }}
+          pr_title: "Pulling ${{ github.ref }} into develop"
+          pr_body: ":crown: **Automated pull request**"        
           source_branch: ""
           destination_branch: "develop"
-          pr_title: Automated pull request to develop
-          pr_body: "**Automated pull request**"
           pr_assignee: ${{ github.actor }}
           pr_label: develop
+          github_token: ${{ secrets.REPOS_TOKEN }}          
 
       - name: Notify if failure
         if: ${{ failure() }}
