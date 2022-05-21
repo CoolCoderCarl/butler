@@ -41,12 +41,16 @@ jobs:
     name: Create Pull Request to develop
 
     steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
       - name: Create PR to develop
         uses: devops-infra/action-pull-request@v0.4.2
         with:
           github_token: ${{ secrets.REPOS_TOKEN }}
           target_branch: develop
-#          title: Automated pull request to develop
+          title: Automated pull request to develop
           body: "**Automated pull request**"
           reviewer: ${{ github.actor }}
           assignee: ${{ github.actor }}
