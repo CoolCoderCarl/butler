@@ -10,6 +10,5 @@
       }
     ],
     "sort": "ASC",
-    "pr_template": "- ${{TITLE}}\n   - PR: #${{NUMBER}}",
-    "max_pull_requests": 10
+    "pr_template": "- ${{TITLE}}\n   - PR: #${{NUMBER}}"
 }
