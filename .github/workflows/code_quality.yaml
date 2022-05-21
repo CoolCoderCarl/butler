@@ -55,17 +55,15 @@ jobs:
           echo "Running on default: ${{ steps.branch_name.outputs.current_branch }}"
 
       - name: Create PR to develop
-        uses: devops-infra/action-pull-request@v0.4.2
+        uses: repo-sync/pull-request@v2
         with:
           github_token: ${{ secrets.REPOS_TOKEN }}
-          source_branch: ${{ steps.branch_name.outputs.current_branch }}
-          target_branch: develop
-          title: Automated pull request to develop
-          body: "**Automated pull request**"
-          reviewer: ${{ github.actor }}
-          assignee: ${{ github.actor }}
-          label: develop
-          get_diff: true
+          source_branch: ""
+          destination_branch: "develop"
+          pr_title: Automated pull request to develop
+          pr_body: "**Automated pull request**"
+          pr_assignee: ${{ github.actor }}
+          pr_label: develop
 
       - name: Notify if failure
         if: ${{ failure() }}
