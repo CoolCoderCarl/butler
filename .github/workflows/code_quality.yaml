@@ -34,3 +34,32 @@ jobs:
             <b>!!! FAILED !!!</b>
             <b>Failed job:</b> https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
             See changes: https://github.com/${{ github.repository }}/commit/${{ github.sha }}
+
+  create_pull_request:
+    runs-on: ubuntu-latest
+    name: Create Pull Request to develop
+
+    steps:
+      - name: Create PR to develop
+        uses: devops-infra/action-pull-request@v0.4.2
+        with:
+          github_token: ${{ secrets.REPOS_TOKEN }}
+          target_branch: develop
+          title: Automated pull request to develop
+          body: "**Automated pull request**"
+          reviewer: ${{ github.actor }}
+          assignee: ${{ github.actor }}
+          label: develop
+          get_diff: true
+
+      - name: Notify if failure
+        if: ${{ failure() }}
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          format: html
+          message: |
+            <b>!!! FAILED !!!</b>
+            <b>Failed job:</b> https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            See changes: https://github.com/${{ github.repository }}/commit/${{ github.sha }}
