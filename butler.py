@@ -117,7 +117,7 @@ def create_archive(dir_to_archive: str):
     """
     now = datetime.now()
     date_time = now.strftime("%m.%d.%Y_%H.%M.%S")
-    if args.source == "/":
+    if args.archive == "/":
         exit(1)
     else:
         with ZipFile(str(date_time) + ".zip", "w") as zip_obj:
