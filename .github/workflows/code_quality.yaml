@@ -45,11 +45,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Get branch name
+        id: branch_name
+        uses: tj-actions/branch-names@v5.2
+
+      - name: Running on the default branch.
+        if: steps.branch-name.outputs.is_default == 'true'
+        run: |
+          echo "Running on default: ${{ steps.branch_name.outputs.current_branch }}"
+
       - name: Create PR to develop
         uses: devops-infra/action-pull-request@v0.4.2
         with:
           github_token: ${{ secrets.REPOS_TOKEN }}
-          source_branch: ${{ GITHUB_REF }}
+          source_branch: ${{ steps.branch_name.outputs.current_branch }}
           target_branch: develop
           title: Automated pull request to develop
           body: "**Automated pull request**"
