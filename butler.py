@@ -4,6 +4,7 @@ import shutil
 import sys
 from datetime import datetime
 from os.path import basename
+from typing import List
 from zipfile import ZipFile
 
 
@@ -14,39 +15,39 @@ def butler_name():
         return sys.argv[0].split("/")[-1]
 
 
-files_extension = [
-    ".txt",
-    ".ini",
-    ".md",
-    ".doc",
-    ".docx",
-    ".rtf",
-    ".pdf",
-    ".xlsx",
-    ".xls",
-    ".pptx",
-    ".zip",
-    ".7z",
-    ".gz",
-    ".bz",
-    ".gzip",
-    ".bzip",
-    ".iso",
-    ".mkv",
-    ".mov",
-    ".mp4",
-    ".bmp",
-    ".jpg",
-    ".png",
-    ".exe",
-    ".msi",
-    ".msu",
-    ".conf",
-    ".cfg",
-    ".net",
-    ".deny",
-    ".allow",
-]
+# files_extension = [
+#     ".txt",
+#     ".ini",
+#     ".md",
+#     ".doc",
+#     ".docx",
+#     ".rtf",
+#     ".pdf",
+#     ".xlsx",
+#     ".xls",
+#     ".pptx",
+#     ".zip",
+#     ".7z",
+#     ".gz",
+#     ".bz",
+#     ".gzip",
+#     ".bzip",
+#     ".iso",
+#     ".mkv",
+#     ".mov",
+#     ".mp4",
+#     ".bmp",
+#     ".jpg",
+#     ".png",
+#     ".exe",
+#     ".msi",
+#     ".msu",
+#     ".conf",
+#     ".cfg",
+#     ".net",
+#     ".deny",
+#     ".allow",
+# ]
 
 archives_extension = [".zip", ".7z", ".gz", ".bz", ".gzip", ".bzip", ".iso"]
 
@@ -86,6 +87,7 @@ def group_up_files(new_dir_name: str):
             if butler_name().lower() in filename.lower():
                 pass
             else:
+                # FIX
                 for ext in files_extension:
                     if filename.endswith(ext):
                         file_path = os.path.join(args.source, filename)
@@ -173,10 +175,30 @@ root_parser.add_argument(
 args = root_parser.parse_args()
 
 
+def get_files_extension(path_to_dir: str) -> List:
+    """
+    Return list of files in target directory
+    :param path_to_dir:
+    :return:
+    """
+    list_dir = os.listdir(path_to_dir)
+
+    files_extension = [
+        file for file in list_dir if os.path.isfile("/test/test/" + file)
+    ]
+
+    result = []
+    for ext in files_extension:
+        result.append(ext.split(".")[-1])
+
+    return result
+
+
 if __name__ == "__main__":
-    if args.clean:
-        clean_the_dir(args.clean)
-    elif args.group:
-        group_up_files(args.target)
-    elif args.archive:
-        create_archive(args.archive)
+    # if args.clean:
+    #     clean_the_dir(args.clean)
+    # elif args.group:
+    #     group_up_files(args.target)
+    # elif args.archive:
+    #     create_archive(args.archive)
+    print(get_files_extension("/test/test/"))
