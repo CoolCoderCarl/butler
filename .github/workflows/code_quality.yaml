@@ -11,6 +11,7 @@ jobs:
     container: python:3.9
 
     steps:
+
       - name: Checkout code
         uses: actions/checkout@v2
 
@@ -22,6 +23,38 @@ jobs:
 
       - name: Isort check
         run: isort --check .
+
+      - name: Notify if failure
+        if: ${{ failure() }}
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          format: html
+          message: |
+            <b>!!! FAILED !!!</b>
+            <b>Failed job:</b> https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            See changes: https://github.com/${{ github.repository }}/commit/${{ github.sha }}
+
+  create_pull_request:
+    runs-on: ubuntu-latest
+    name: Create Pull Request to develop
+
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Create PR to develop
+        uses: repo-sync/pull-request@v2
+        with:
+          pr_title: "Pulling ${{ github.ref }} into develop"
+          pr_body: ":crown: **Automated pull request**"        
+          source_branch: ""
+          destination_branch: "develop"
+          pr_assignee: ${{ github.actor }}
+          pr_label: develop
+          github_token: ${{ secrets.REPOS_TOKEN }}          
 
       - name: Notify if failure
         if: ${{ failure() }}
