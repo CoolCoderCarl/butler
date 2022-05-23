@@ -90,6 +90,7 @@ def group_up_files(new_dir_name: str):
                     try:
                         shutil.move(file_path, new_dir_path)
                     except OSError:
+                        # Think about dat case
                         print("File " + filename + " already exist in " + new_dir_path)
 
 
