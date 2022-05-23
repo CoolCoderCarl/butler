@@ -26,6 +26,7 @@ jobs:
           format: html
           message: |
             ${{ github.actor }} created commit:
+            <p>231B</>
 
             <b>WorkFlows:</b> <a href="https://github.com/${{ github.repository }}/actions/">ActionsList</a>
 
