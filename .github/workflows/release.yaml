@@ -61,9 +61,6 @@ jobs:
       get_release_url: ${{ steps.set_release_url.outputs.release_url }}
     steps:
 
-      - name: Checkout code
-        uses: actions/checkout@v2
-
       - name: Build Changelog
         id: github_release
         uses: mikepenz/release-changelog-builder-action@v3
