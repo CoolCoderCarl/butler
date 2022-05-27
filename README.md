@@ -12,6 +12,8 @@ To fix this problem this program was developed in the Python language.
 
 In fact, this program is a working prototype for a similar Golang program, but you can already use it now.
 
+In fact trash dir exists not only in Downloads, so it is work for Butler.
+
 Enjoy.
 
 
@@ -20,6 +22,7 @@ The program provides three functions:
 1. **Cleaning**  
 2. **Grouping**  
 3. **Archiving**
+4. **Combining**
 
 In case the first and third functions are already familiar, grouping may seem like an interesting function.
 
@@ -40,6 +43,12 @@ For example, you have a lot of *.exe* files, after this command you will have on
 **Archiving**  
 `butler.exe --archive /path/to/dir/`  
 Create zip archive in current directory for target directory.
+
+**Combining**  
+`butler.exe combine --dir /path/to/dir/ --ext PDF`  
+Combine files in target dir according theirs extensions.  
+From `--dir` get path to directory where the combination will be processed.  
+From `--ext` get extension for filter files and combine only them.
 
 
 ## Golang version
