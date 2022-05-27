@@ -10,6 +10,51 @@ from zipfile import ZipFile
 archives_extension = [".zip", ".7z", ".gz", ".bz", ".gzip", ".bzip", ".iso"]
 
 
+def get_args():
+    """
+    Get arguments from CLI
+    :return:
+    """
+    root_parser = argparse.ArgumentParser(
+        prog="butler",
+        description="""The Butler helps keep the castle clean and tidy""",
+        epilog="""(c) CoolCoderCarl""",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
+
+    root_parser.add_argument(
+        "-c",
+        "--clean",
+        help="Clean target directory. Example /tmp/, both slash required",
+        type=str,
+    )
+
+    group_up_subparser = root_parser.add_subparsers(
+        title="group_up_subparser",
+        dest="group",
+        help="Group up files in source dir with target dir name",
+    )
+
+    group_up_parser = group_up_subparser.add_parser(
+        "group", help="Dir to group up the files."
+    )
+    group_up_parser.add_argument(
+        "--source", help="Source dir name. Example /tmp/, both slash required", type=str
+    )
+    group_up_parser.add_argument(
+        "--target", help="Target dir name. Example ALL", default="ALL", type=str
+    )
+
+    root_parser.add_argument(
+        "-a",
+        "--archive",
+        help="Create archive from target directory. Example /tmp/, both slash required",
+        type=str,
+    )
+
+    return root_parser.parse_args()
+
+
 def get_butler_name() -> str:
     """
     Get Butler name from sys.argv to escape it in logic
@@ -146,45 +191,8 @@ def create_archive(dir_to_archive: str):
                             zip_obj.write(zip_path, basename(zip_path))
 
 
-def get_args():
-    root_parser = argparse.ArgumentParser(
-        prog="butler",
-        description="""The Butler helps keep the castle clean and tidy""",
-        epilog="""(c) CoolCoderCarl""",
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-    )
-
-    root_parser.add_argument(
-        "-c",
-        "--clean",
-        help="Clean target directory. Example /tmp/, both slash required",
-        type=str,
-    )
-
-    group_up_subparser = root_parser.add_subparsers(
-        title="group_up_subparser",
-        dest="group",
-        help="Group up files in source dir with target dir name",
-    )
-
-    group_up_parser = group_up_subparser.add_parser(
-        "group", help="Dir to group up the files."
-    )
-    group_up_parser.add_argument(
-        "--source", help="Source dir name. Example /tmp/, both slash required", type=str
-    )
-    group_up_parser.add_argument(
-        "--target", help="Target dir name. Example ALL", default="ALL", type=str
-    )
-
-    root_parser.add_argument(
-        "-a",
-        "--archive",
-        help="Create archive from target directory. Example /tmp/, both slash required",
-        type=str,
-    )
-
-    return root_parser.parse_args()
+def combine():
+    pass
 
 
 if __name__ == "__main__":
