@@ -1,7 +1,7 @@
 name: Release
 
 on:
-  pull_request:
+  push:
     branches: [ main ]
     paths-ignore:
       - 'README.md'
@@ -60,9 +60,6 @@ jobs:
     outputs:
       get_release_url: ${{ steps.set_release_url.outputs.release_url }}
     steps:
-
-      - name: Checkout code
-        uses: actions/checkout@v2
 
       - name: Build Changelog
         id: github_release
@@ -183,7 +180,7 @@ jobs:
 
             <b>WorkFlows:</b> <a href="https://github.com/${{ github.repository }}/actions">ActionsList</a>
 
-            Commit with tag: ${{ needs.release.outputs.get_current_tag }}
+            Commit with tag: ${{ needs.prepare.outputs.get_current_tag }}
 
             Repository: ${{ github.repository }}
 
