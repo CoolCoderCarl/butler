@@ -22,37 +22,83 @@ def get_args():
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
 
-    root_parser.add_argument(
-        "-c",
-        "--clean",
+    serving_parser = root_parser.add_subparsers(dest="serving")
+
+    clean_parser = serving_parser.add_parser(
+        "clean",
         help="Clean target directory. Example /tmp/, both slash required",
+    )
+    clean_parser.add_argument(
+        "-s",
+        "--source",
+        dest="source",
+        help="Source dir name. Example /tmp/, both slash required",
         type=str,
     )
 
-    group_up_subparser = root_parser.add_subparsers(
-        title="group_up_subparser",
-        dest="group",
-        help="Group up files in source dir with target dir name",
-    )
-
-    group_up_parser = group_up_subparser.add_parser(
-        "group", help="Dir to group up the files."
+    group_up_parser = serving_parser.add_parser(
+        "group",
+        help="Group up files in target dir",
     )
     group_up_parser.add_argument(
-        "--source", help="Source dir name. Example /tmp/, both slash required", type=str
+        "-s",
+        "--source",
+        dest="source",
+        help="Source dir name. Example /tmp/, both slash required",
+        type=str,
     )
     group_up_parser.add_argument(
-        "--target", help="Target dir name. Example ALL", default="ALL", type=str
+        "-t",
+        "--target",
+        dest="target",
+        help="Target dir name. Example ALL",
+        default="ALL",
+        type=str,
     )
 
-    root_parser.add_argument(
-        "-a",
-        "--archive",
+    archive_parser = serving_parser.add_parser(
+        "archive",
         help="Create archive from target directory. Example /tmp/, both slash required",
+    )
+    archive_parser.add_argument(
+        "-s",
+        "--source",
+        dest="source",
+        help="Source dir name. Example /tmp/, both slash required",
+        type=str,
+    )
+    # Target dir where to save archive
+    # Exclude files according extensions
+
+    combine_parser = serving_parser.add_parser(
+        "combine",
+        help="Combine files according extensions",
+    )
+    combine_parser.add_argument(
+        "-s",
+        "--source",
+        dest="source",
+        help="Source dir name. Example /tmp/, both slash required",
+        type=str,
+    )
+    combine_parser.add_argument(
+        "-t",
+        "--target",
+        dest="target",
+        help="Target dir name. Example ALL",
+        default="ALL",
+        type=str,
+    )
+    combine_parser.add_argument(
+        "-e",
+        "--ext",
+        dest="ext",
+        help="Target extensions name. Example DOCX",
+        default="DOCX",
         type=str,
     )
 
-    return root_parser.parse_args()
+    return root_parser
 
 
 def get_butler_name() -> str:
@@ -68,19 +114,53 @@ def get_butler_name() -> str:
         return sys.argv[0].split("/")[-1]
 
 
-def get_files_extension(path_to_dir: str) -> Set:
+def get_files_extension(path_to_dir: str, special_ext="") -> Set:
     """
-    Return list of files in target directory
+    Return list of files in target directory. Exit if there is no files
     :param path_to_dir:
+    :param special_ext:
     :return:
     """
     list_dir = os.listdir(path_to_dir)
 
+    if len(list_dir) == 0:
+        exit(1)
+
+    files = [file for file in list_dir if os.path.isfile(path_to_dir + file)]
+    result = []
+
+    if len(special_ext) == 0:
+        for file in files:
+            result.append("." + file.split(".")[-1])
+    else:
+        for file in files:
+            if special_ext in file.split(".")[-1]:
+                result.append("." + file.split(".")[-1])
+
+    result = set(result)
+
+    return result
+
+
+def get_files_to_combine(path_to_dir: str, special_files_extensions: str) -> Set:
+    """
+    Get files in target directory according their extensions
+    :param path_to_dir:
+    :param special_files_extensions:
+    :return:
+    """
+    list_dir = os.listdir(path_to_dir)
+
+    if len(list_dir) == 0:
+        exit(1)
+
     files = [file for file in list_dir if os.path.isfile(path_to_dir + file)]
 
     result = []
-    for ext in files:
-        result.append("." + ext.split(".")[-1])
+    for file in files:
+        ext = file.split(".")[-1]
+        if ext.lower() == special_files_extensions.lower():
+            result.append(file)
 
     result = set(result)
 
@@ -107,7 +187,7 @@ def clean_the_dir(path_to_clean: str):
     :param path_to_clean:
     :return:
     """
-    if get_args().clean == "/":
+    if get_args().parse_args().serving == "/":
         exit(1)
     else:
         if len(os.listdir(path_to_clean)) == 0:
@@ -132,35 +212,34 @@ def group_up_files(new_dir_name: str):
     :param new_dir_name:
     :return:
     """
-    if get_args().source == "/":
+    if get_args().parse_args().source == "/":
         exit(1)
     else:
-        extensions = get_files_extension(get_args().source)
-        if len(os.listdir(get_args().source)) == 0:
-            exit(1)
-        else:
-            for filename in os.listdir(get_args().source):
-                if get_butler_name().lower() in filename.lower():
-                    pass
-                elif os.path.isdir(get_args().source + filename):
-                    pass
-                else:
-                    for ext in extensions:
-                        file_path = os.path.join(get_args().source, filename)
-                        if get_args().source == ".":
-                            new_dir_path = new_dir_name.upper() + ext.upper()
-                        else:
-                            new_dir_path = (
-                                get_args().source + new_dir_name.upper() + ext.upper()
-                            )
-                        try:
-                            os.mkdir(new_dir_path)
-                        except OSError:
-                            pass
-                        try:
-                            moving_files(file_path, new_dir_path)
-                        except OSError:
-                            pass
+        extensions = get_files_extension(get_args().parse_args().source)
+        for filename in os.listdir(get_args().parse_args().source):
+            if get_butler_name().lower() in filename.lower():
+                pass
+            elif os.path.isdir(get_args().parse_args().source + filename):
+                pass
+            else:
+                for ext in extensions:
+                    file_path = os.path.join(get_args().parse_args().source, filename)
+                    if get_args().parse_args().source == ".":
+                        new_dir_path = new_dir_name.upper() + ext.upper()
+                    else:
+                        new_dir_path = (
+                            get_args().parse_args().source
+                            + new_dir_name.upper()
+                            + ext.upper()
+                        )
+                    try:
+                        os.mkdir(new_dir_path)
+                    except OSError:
+                        pass
+                    try:
+                        moving_files(file_path, new_dir_path)
+                    except OSError:
+                        pass
 
 
 def create_archive(dir_to_archive: str):
@@ -172,7 +251,7 @@ def create_archive(dir_to_archive: str):
     """
     now = datetime.now()
     date_time = now.strftime("%m.%d.%Y_%H.%M.%S")
-    if get_args().archive == "/":
+    if get_args().parse_args().source == "/":
         exit(1)
     else:
         if len(os.listdir(dir_to_archive)) == 0:
@@ -191,14 +270,53 @@ def create_archive(dir_to_archive: str):
                             zip_obj.write(zip_path, basename(zip_path))
 
 
-def combine():
-    pass
+def combine_the_files(new_dir_name: str):
+    """
+    Combine files in target directory according to their extensions
+    :param new_dir_name:
+    :return:
+    """
+    if get_args().parse_args().source == "/":
+        exit(1)
+    else:
+        files_to_combine = get_files_to_combine(
+            get_args().parse_args().source, get_args().parse_args().ext
+        )
+        for filename in files_to_combine:
+            if get_butler_name().lower() in filename.lower():
+                pass
+            elif os.path.isdir(get_args().parse_args().source + filename):
+                pass
+            else:
+                file_path = os.path.join(get_args().parse_args().source, filename)
+                extensions = get_files_extension(
+                    get_args().parse_args().source, get_args().parse_args().ext
+                )
+                for ext in extensions:
+                    if get_args().parse_args().source == ".":
+                        new_dir_path = new_dir_name.upper() + ext.upper()
+                    else:
+                        new_dir_path = (
+                            get_args().parse_args().source
+                            + new_dir_name.upper()
+                            + ext.upper()
+                        )
+                    try:
+                        os.mkdir(new_dir_path)
+                    except OSError:
+                        pass
+                    try:
+                        moving_files(file_path, new_dir_path)
+                    except OSError:
+                        pass
 
 
 if __name__ == "__main__":
-    if get_args().clean:
-        clean_the_dir(get_args().clean)
-    elif get_args().group:
-        group_up_files(get_args().target)
-    elif get_args().archive:
-        create_archive(get_args().archive)
+    if get_args().parse_args().serving == "clean":
+        clean_the_dir(get_args().parse_args().source)
+    elif get_args().parse_args().serving == "group":
+        group_up_files(get_args().parse_args().target)
+    elif get_args().parse_args().serving == "archive":
+        create_archive(get_args().parse_args().source)
+    elif get_args().parse_args().serving == "combine":
+        combine_the_files(get_args().parse_args().target)
