@@ -7,6 +7,7 @@ from os.path import basename
 from typing import Set
 from zipfile import ZipFile
 
+# Archive extensions to exclude when archiving
 archives_extension = [".zip", ".7z", ".gz", ".bz", ".gzip", ".bzip", ".iso"]
 
 
@@ -35,6 +36,7 @@ def get_args():
         help="Source dir name. Example /tmp/, both slash required",
         type=str,
     )
+    # Exclude files by mask
 
     group_up_parser = serving_parser.add_parser(
         "group",
@@ -101,6 +103,10 @@ def get_args():
     return root_parser
 
 
+# Shortening
+namespace = get_args().parse_args(sys.argv[1:])
+
+
 def get_butler_name() -> str:
     """
     Get Butler name from sys.argv to escape it in logic
@@ -114,11 +120,38 @@ def get_butler_name() -> str:
         return sys.argv[0].split("/")[-1]
 
 
+def create_target_dir(extensions: set, new_dir_name: str, file_path: str):
+    """
+    Create target directory according to extensions specifications
+    :param extensions: set of extensions
+    :param new_dir_name: name of the dir where files will be moved
+    :param file_path: path of the files which will be moved
+    :return:
+    """
+    for ext in extensions:
+        if get_args().parse_args().source == ".":
+            new_dir_path = new_dir_name.upper() + ext.upper()
+        else:
+            new_dir_path = (
+                    get_args().parse_args().source
+                    + new_dir_name.upper()
+                    + ext.upper()
+            )
+        try:
+            os.mkdir(new_dir_path)
+        except OSError:
+            pass
+        try:
+            moving_files(file_path, new_dir_path)
+        except OSError:
+            pass
+
+
 def get_files_extension(path_to_dir: str, special_ext="") -> Set:
     """
     Return list of files in target directory. Exit if there is no files
-    :param path_to_dir:
-    :param special_ext:
+    :param path_to_dir: got list of files from dat dir
+    :param special_ext: extensions which used for combining
     :return:
     """
     list_dir = os.listdir(path_to_dir)
@@ -145,8 +178,8 @@ def get_files_extension(path_to_dir: str, special_ext="") -> Set:
 def get_files_to_combine(path_to_dir: str, special_files_extensions: str) -> Set:
     """
     Get files in target directory according their extensions
-    :param path_to_dir:
-    :param special_files_extensions:
+    :param path_to_dir: got list of files from dat dir
+    :param special_files_extensions: special extensions for files which need to combine
     :return:
     """
     list_dir = os.listdir(path_to_dir)
@@ -184,7 +217,7 @@ def moving_files(move_from: str, move_to: str):
 def clean_the_dir(path_to_clean: str):
     """
     Clean the target directory, but not delete directory itself
-    :param path_to_clean:
+    :param path_to_clean: path to directory which will be cleared
     :return:
     """
     if get_args().parse_args().serving == "/":
@@ -209,7 +242,7 @@ def group_up_files(new_dir_name: str):
     Group up files in target directory
     Create directory for files in target directory with ALL.EXT template according the files extensions
     Move all files to relevant directory
-    :param new_dir_name:
+    :param new_dir_name: name of the dir where files will be moved
     :return:
     """
     if get_args().parse_args().source == "/":
@@ -222,31 +255,15 @@ def group_up_files(new_dir_name: str):
             elif os.path.isdir(get_args().parse_args().source + filename):
                 pass
             else:
-                for ext in extensions:
-                    file_path = os.path.join(get_args().parse_args().source, filename)
-                    if get_args().parse_args().source == ".":
-                        new_dir_path = new_dir_name.upper() + ext.upper()
-                    else:
-                        new_dir_path = (
-                            get_args().parse_args().source
-                            + new_dir_name.upper()
-                            + ext.upper()
-                        )
-                    try:
-                        os.mkdir(new_dir_path)
-                    except OSError:
-                        pass
-                    try:
-                        moving_files(file_path, new_dir_path)
-                    except OSError:
-                        pass
+                file_path = os.path.join(get_args().parse_args().source, filename)
+                create_target_dir(extensions, new_dir_name, file_path)
 
 
 def create_archive(dir_to_archive: str):
     """
     Archive all files in target directory & add archive near the butler.exe
     Ignore files with archive extensions
-    :param dir_to_archive:
+    :param dir_to_archive: path to directory where files will be archived
     :return:
     """
     now = datetime.now()
@@ -273,7 +290,7 @@ def create_archive(dir_to_archive: str):
 def combine_the_files(new_dir_name: str):
     """
     Combine files in target directory according to their extensions
-    :param new_dir_name:
+    :param new_dir_name: name of the dir where files will be moved
     :return:
     """
     if get_args().parse_args().source == "/":
@@ -292,31 +309,15 @@ def combine_the_files(new_dir_name: str):
                 extensions = get_files_extension(
                     get_args().parse_args().source, get_args().parse_args().ext
                 )
-                for ext in extensions:
-                    if get_args().parse_args().source == ".":
-                        new_dir_path = new_dir_name.upper() + ext.upper()
-                    else:
-                        new_dir_path = (
-                            get_args().parse_args().source
-                            + new_dir_name.upper()
-                            + ext.upper()
-                        )
-                    try:
-                        os.mkdir(new_dir_path)
-                    except OSError:
-                        pass
-                    try:
-                        moving_files(file_path, new_dir_path)
-                    except OSError:
-                        pass
+                create_target_dir(extensions, new_dir_name, file_path)
 
 
 if __name__ == "__main__":
-    if get_args().parse_args().serving == "clean":
-        clean_the_dir(get_args().parse_args().source)
-    elif get_args().parse_args().serving == "group":
-        group_up_files(get_args().parse_args().target)
-    elif get_args().parse_args().serving == "archive":
-        create_archive(get_args().parse_args().source)
-    elif get_args().parse_args().serving == "combine":
-        combine_the_files(get_args().parse_args().target)
+    if namespace.serving == "clean":
+        clean_the_dir(namespace.source)
+    elif namespace.serving == "group":
+        group_up_files(namespace.target)
+    elif namespace.serving == "archive":
+        create_archive(namespace.source)
+    elif namespace.serving == "combine":
+        combine_the_files(namespace.target)
