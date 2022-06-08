@@ -133,9 +133,7 @@ def create_target_dir(extensions: set, new_dir_name: str, file_path: str):
             new_dir_path = new_dir_name.upper() + ext.upper()
         else:
             new_dir_path = (
-                    get_args().parse_args().source
-                    + new_dir_name.upper()
-                    + ext.upper()
+                get_args().parse_args().source + new_dir_name.upper() + ext.upper()
             )
         try:
             os.mkdir(new_dir_path)
