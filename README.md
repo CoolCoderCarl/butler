@@ -45,7 +45,7 @@ For example, you have a lot of *.exe* files, after this command you will have on
 Create zip archive in current directory for target directory.
 
 **Combining**  
-`butler.exe combine --dir /path/to/dir/ --ext PDF`  
+`butler.exe combine --source /path/to/dir/ --target ALL --ext PDF`  
 Combine files in target dir according theirs extensions.  
 From `--dir` get path to directory where the combination will be processed.  
 From `--ext` get extension for filter files and combine only them.
