@@ -30,25 +30,26 @@ In case the first and third functions are already familiar, grouping may seem li
 
 ### Examples 
 **Cleaning**  
-`butler.exe --clean /path/to/dir/`  
+`butler.exe clean --source /path/to/dir/`  
 Clean target dir but not delete it.
 
 **Grouping**  
 `butler.exe group --source /path/to/dir/ --target DIRNAME`  
 Group up files by extensions to new directory named.  
 From `--source` get path to directory where the files will be group up.  
-From `--target` get new directory name where the files will be moved. Default *ALL*.  
+From `--target` get new directory name where the files will be moved.   
 For example, you have a lot of *.exe* files, after this command you will have one directory called *ALL.EXE* with all your *.exe* files in it.
 
 **Archiving**  
-`butler.exe --archive /path/to/dir/`  
+`butler.exe archive --source /path/to/dir/`  
 Create zip archive in current directory for target directory.
 
 **Combining**  
-`butler.exe combine --dir /path/to/dir/ --ext PDF`  
+`butler.exe combine --source /path/to/dir/ --target ALL --ext DOCX`  
 Combine files in target dir according theirs extensions.  
-From `--dir` get path to directory where the combination will be processed.  
-From `--ext` get extension for filter files and combine only them.
+From `--source` get path to directory where the combination will be processed.  
+From `--target` get new directory name where the files will be moved.    
+From `--ext` get extension for filter files and combine only them.  
 
 
 ## Golang version
