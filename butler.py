@@ -36,7 +36,9 @@ def get_args():
         help="Source dir name. Example /tmp/, both slash required",
         type=str,
     )
+    # Include only files by mask
     # Exclude files by mask
+    # Force remove target directory
 
     group_up_parser = serving_parser.add_parser(
         "group",
@@ -54,7 +56,6 @@ def get_args():
         "--target",
         dest="target",
         help="Target dir name. Example ALL",
-        default="ALL",
         type=str,
     )
 
@@ -88,7 +89,6 @@ def get_args():
         "--target",
         dest="target",
         help="Target dir name. Example ALL",
-        default="ALL",
         type=str,
     )
     combine_parser.add_argument(
@@ -96,7 +96,6 @@ def get_args():
         "--ext",
         dest="ext",
         help="Target extensions name. Example DOCX",
-        default="DOCX",
         type=str,
     )
 
@@ -198,6 +197,7 @@ def get_files_to_combine(path_to_dir: str, special_files_extensions: str) -> Set
     return result
 
 
+# Move & rename if files already exist & notify
 def moving_files(move_from: str, move_to: str):
     """
     Moved files from source to target

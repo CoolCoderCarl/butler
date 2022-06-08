@@ -37,7 +37,7 @@ Clean target dir but not delete it.
 `butler.exe group --source /path/to/dir/ --target DIRNAME`  
 Group up files by extensions to new directory named.  
 From `--source` get path to directory where the files will be group up.  
-From `--target` get new directory name where the files will be moved. Default *ALL*.  
+From `--target` get new directory name where the files will be moved.   
 For example, you have a lot of *.exe* files, after this command you will have one directory called *ALL.EXE* with all your *.exe* files in it.
 
 **Archiving**  
@@ -48,8 +48,8 @@ Create zip archive in current directory for target directory.
 `butler.exe combine --source /path/to/dir/ --target ALL --ext DOCX`  
 Combine files in target dir according theirs extensions.  
 From `--source` get path to directory where the combination will be processed.  
-From `--target` get new directory name where the files will be moved. Default *ALL*.  
-From `--ext` get extension for filter files and combine only them. Default *DOCX*.
+From `--target` get new directory name where the files will be moved.    
+From `--ext` get extension for filter files and combine only them.  
 
 
 ## Golang version
