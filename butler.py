@@ -36,9 +36,9 @@ def get_args():
         help="Source dir name. Example /tmp/, both slash required",
         type=str,
     )
+    clean_parser.add_argument("-f", "--force", action=argparse.BooleanOptionalAction)
     # Include only files by mask
     # Exclude files by mask
-    # Force remove target directory
 
     group_up_parser = serving_parser.add_parser(
         "group",
@@ -128,12 +128,10 @@ def create_target_dir(extensions: set, new_dir_name: str, file_path: str):
     :return:
     """
     for ext in extensions:
-        if get_args().parse_args().source == ".":
+        if namespace.source == ".":
             new_dir_path = new_dir_name.upper() + ext.upper()
         else:
-            new_dir_path = (
-                get_args().parse_args().source + new_dir_name.upper() + ext.upper()
-            )
+            new_dir_path = namespace.source + new_dir_name.upper() + ext.upper()
         try:
             os.mkdir(new_dir_path)
         except OSError:
@@ -212,16 +210,31 @@ def moving_files(move_from: str, move_to: str):
         shutil.move(move_from, move_to)
 
 
+def delete_empty_dir(force: bool, path_to_clean: str):
+    """
+    Remove target directory
+    :param force: Bool key, if set remove target directory
+    :param path_to_clean: path to directory which will be cleared
+    :return:
+    """
+    if force:
+        try:
+            os.rmdir(path_to_clean)
+        except OSError:
+            pass
+
+
 def clean_the_dir(path_to_clean: str):
     """
     Clean the target directory, but not delete directory itself
     :param path_to_clean: path to directory which will be cleared
     :return:
     """
-    if get_args().parse_args().serving == "/":
+    if namespace.source == "/":
         exit(1)
     else:
         if len(os.listdir(path_to_clean)) == 0:
+            delete_empty_dir(namespace.force, namespace.source)
             exit(1)
         else:
             for filename in os.listdir(path_to_clean):
@@ -233,6 +246,7 @@ def clean_the_dir(path_to_clean: str):
                         shutil.rmtree(path)
                     except OSError:
                         os.remove(path)
+        delete_empty_dir(namespace.force, namespace.source)
 
 
 def group_up_files(new_dir_name: str):
@@ -243,17 +257,17 @@ def group_up_files(new_dir_name: str):
     :param new_dir_name: name of the dir where files will be moved
     :return:
     """
-    if get_args().parse_args().source == "/":
+    if namespace.source == "/":
         exit(1)
     else:
-        extensions = get_files_extension(get_args().parse_args().source)
-        for filename in os.listdir(get_args().parse_args().source):
+        extensions = get_files_extension(namespace.source)
+        for filename in os.listdir(namespace.source):
             if get_butler_name().lower() in filename.lower():
                 pass
-            elif os.path.isdir(get_args().parse_args().source + filename):
+            elif os.path.isdir(namespace.source + filename):
                 pass
             else:
-                file_path = os.path.join(get_args().parse_args().source, filename)
+                file_path = os.path.join(namespace.source, filename)
                 create_target_dir(extensions, new_dir_name, file_path)
 
 
@@ -266,7 +280,7 @@ def create_archive(dir_to_archive: str):
     """
     now = datetime.now()
     date_time = now.strftime("%m.%d.%Y_%H.%M.%S")
-    if get_args().parse_args().source == "/":
+    if namespace.source == "/":
         exit(1)
     else:
         if len(os.listdir(dir_to_archive)) == 0:
@@ -291,22 +305,18 @@ def combine_the_files(new_dir_name: str):
     :param new_dir_name: name of the dir where files will be moved
     :return:
     """
-    if get_args().parse_args().source == "/":
+    if namespace.source == "/":
         exit(1)
     else:
-        files_to_combine = get_files_to_combine(
-            get_args().parse_args().source, get_args().parse_args().ext
-        )
+        files_to_combine = get_files_to_combine(namespace.source, namespace.ext)
         for filename in files_to_combine:
             if get_butler_name().lower() in filename.lower():
                 pass
-            elif os.path.isdir(get_args().parse_args().source + filename):
+            elif os.path.isdir(namespace.source + filename):
                 pass
             else:
-                file_path = os.path.join(get_args().parse_args().source, filename)
-                extensions = get_files_extension(
-                    get_args().parse_args().source, get_args().parse_args().ext
-                )
+                file_path = os.path.join(namespace.source, filename)
+                extensions = get_files_extension(namespace.source, namespace.ext)
                 create_target_dir(extensions, new_dir_name, file_path)
 
 

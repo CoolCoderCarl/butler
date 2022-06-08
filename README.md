@@ -31,7 +31,8 @@ In case the first and third functions are already familiar, grouping may seem li
 ### Examples 
 **Cleaning**  
 `butler.exe clean --source /path/to/dir/`  
-Clean target dir but not delete it.
+Clean target dir but not delete it.  
+If set `-f` remove directory also.
 
 **Grouping**  
 `butler.exe group --source /path/to/dir/ --target DIRNAME`  
