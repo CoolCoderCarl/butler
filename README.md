@@ -12,6 +12,8 @@ To fix this problem this program was developed in the Python language.
 
 In fact, this program is a working prototype for a similar Golang program, but you can already use it now.
 
+In fact trash dir exists not only in Downloads, so it is work for Butler.
+
 Enjoy.
 
 
@@ -20,6 +22,7 @@ The program provides three functions:
 1. **Cleaning**  
 2. **Grouping**  
 3. **Archiving**
+4. **Combining**
 
 In case the first and third functions are already familiar, grouping may seem like an interesting function.
 
@@ -27,19 +30,27 @@ In case the first and third functions are already familiar, grouping may seem li
 
 ### Examples 
 **Cleaning**  
-`butler.exe --clean /path/to/dir/`  
-Clean target dir but not delete it.
+`butler.exe clean --source /path/to/dir/`  
+Clean target dir but not delete it.  
+If set `-f` remove directory also.
 
 **Grouping**  
 `butler.exe group --source /path/to/dir/ --target DIRNAME`  
 Group up files by extensions to new directory named.  
 From `--source` get path to directory where the files will be group up.  
-From `--target` get new directory name where the files will be moved. Default *ALL*.  
+From `--target` get new directory name where the files will be moved.   
 For example, you have a lot of *.exe* files, after this command you will have one directory called *ALL.EXE* with all your *.exe* files in it.
 
 **Archiving**  
-`butler.exe --archive /path/to/dir/`  
+`butler.exe archive --source /path/to/dir/`  
 Create zip archive in current directory for target directory.
+
+**Combining**  
+`butler.exe combine --source /path/to/dir/ --target ALL --ext DOCX`  
+Combine files in target dir according theirs extensions.  
+From `--source` get path to directory where the combination will be processed.  
+From `--target` get new directory name where the files will be moved.    
+From `--ext` get extension for filter files and combine only them.  
 
 
 ## Golang version
