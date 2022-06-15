@@ -8,7 +8,7 @@ from typing import Set
 from zipfile import ZipFile
 
 # Archive extensions to exclude when archiving
-archives_extension = [".zip", ".7z", ".gz", ".bz", ".gzip", ".bzip", ".iso"]
+archives_extension = [".zip", ".7z", ".gz", ".bz", ".gzip", ".bzip", ".iso", ".rar"]
 
 
 def get_args():
