@@ -8,7 +8,7 @@ from typing import Set
 from zipfile import ZipFile
 
 # Archive extensions to exclude when archiving
-archives_extension = [".zip", ".7z", ".gz", ".bz", ".gzip", ".bzip", ".iso"]
+archives_extension = [".zip", ".7z", ".gz", ".bz", ".gzip", ".bzip", ".iso", ".rar"]
 
 
 def get_args():
@@ -152,7 +152,7 @@ def get_files_extension(path_to_dir: str, special_ext="") -> Set:
     list_dir = os.listdir(path_to_dir)
 
     if len(list_dir) == 0:
-        exit(1)
+        exit(0)
 
     files = [file for file in list_dir if os.path.isfile(path_to_dir + file)]
     result = []
@@ -180,7 +180,7 @@ def get_files_to_combine(path_to_dir: str, special_files_extensions: str) -> Set
     list_dir = os.listdir(path_to_dir)
 
     if len(list_dir) == 0:
-        exit(1)
+        exit(0)
 
     files = [file for file in list_dir if os.path.isfile(path_to_dir + file)]
 
@@ -235,7 +235,7 @@ def clean_the_dir(path_to_clean: str):
     else:
         if len(os.listdir(path_to_clean)) == 0:
             delete_empty_dir(namespace.force, namespace.source)
-            exit(1)
+            exit(0)
         else:
             for filename in os.listdir(path_to_clean):
                 path = os.path.join(path_to_clean, filename)
@@ -284,7 +284,7 @@ def create_archive(dir_to_archive: str):
         exit(1)
     else:
         if len(os.listdir(dir_to_archive)) == 0:
-            exit(1)
+            exit(0)
         else:
             with ZipFile(str(date_time) + ".zip", "w") as zip_obj:
                 for folder_name, sub_folders, filenames in os.walk(dir_to_archive):
